@@ -236,7 +236,7 @@ class Upbeat():
             'price' : price,
             'ord_type' : ord_type
         }
-        print(f"쿼리는: {query}")
+        
         query_string = urlencode(query).encode()
         m = hashlib.sha512()
         m.update(query_string)
@@ -324,7 +324,7 @@ class Upbeat():
         query = {
             'currency' : 'ADA',
             'amount' : '0.01',
-            'address' : ''
+            'address' : '9187a66e-5edf-427c-9d12-0c21c26ae4b8'
         }
         query_string = self.getQueryString(query)
         query_hash = self.getQueryHash(query_string)
@@ -535,18 +535,19 @@ upbeat = Upbeat()
 account = upbeat.getAllAccount()
 print(f'전체계좌조회: {account}')
 # 주문 가능 정보
-order = upbeat.getOrderChance()
-print(f'주문가능정보: {order}')
+orderInfo = upbeat.getOrderChance()
+print(f'주문가능정보: {orderInfo}')
 
 # 주문하기 
 # side_status 가 1이면 매수 
 # side_statsu 가 1이 아닌 경우는 매도
 
 order = upbeat.orderRequest(
-    volume = '2',
+    volume = 1,
     price = '5000',
     side_status=1
 )
+print(f'주문하기: {order}')
 
 # 주문 리스트 조회
 orderList = upbeat.getOrderList()
