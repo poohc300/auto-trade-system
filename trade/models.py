@@ -21,7 +21,7 @@ class Upbeat():
 
     def getQuery(self):
         query = {
-            'market' :  'KRW-ETH'
+            'market' :  'KRW-ADA'
         }
         return query
 
@@ -87,7 +87,6 @@ class Upbeat():
 
         return res.json()
 
-    
     def getAllAccount(self):
         '''
             전체 계좌 조회
@@ -102,8 +101,11 @@ class Upbeat():
             주문 가능 정보
         '''
         route_name = "orders/chance"
+        query = {
+            'state' : 'wait'
+        }
         res = self.sendParamForm(
-            route_name=route_name
+            route_name=route_name,
             )
 
     def getOrderChanceById(self, id):
@@ -123,8 +125,124 @@ class Upbeat():
 
         return res.json()
 
+    def getOrderList(self):
+        '''
+            주문 리스트 조회
+        '''
+        route_name = "orders"
+        res = self.sendParamForm(
+            route_name=route_name
+            )
+
+    def getDepositList(self):
+        '''
+            입금 리스트 조회
+        '''
+        route_name = "deposits"
+        res = self.sendParamForm(
+            route_name=route_name
+            )
+
+    def orderRequest(self, volume, price):
+        '''
+            주문 하기
+
+                market : 거래 시장
+                side : 주문 종류
+                    - bid : 매수
+                    - ask : 매도
+                volume : 주문량(지정가, 시장가 매도 시 필수)
+                price : 주문가격
+                    ex) KRW-BTC 마켓에서 1BTC 당 1000 KRW 로 거래할 경우, 값은 1000이 됨
+                        KRW-BTC 마켓에서 1BTC 당 매도 1호가가 500 KRW 인 경우, 시장가 매수 시
+                        값을 1000으로 세팅하면 2BTC 가 매수 된다
+                        (수수료가 존재하거나 매도 1호가의 수량에 따라 상이할 수 있음)
+                ord_type : 주문 타입
+                    - limit : 지정가 주문
+                    - price : 시장가 주문(매수)
+                    - market : 시장가 주문(매도)
+                identifier : 조회용 사용자 지정값
+        '''
+        route_name = "orders"
+        ord_type = "limit"
+        query = {
+            'market' : 'KRW-ADA',
+            'side' : 'ask',
+            'volume' : volume,
+            'price' : price,
+            'ord_type' : ord_type
+        }
+        print(f"쿼리는: {query}")
+        query_string = urlencode(query).encode()
+        m = hashlib.sha512()
+        m.update(query_string)
+        query_hash = m.hexdigest()
+        
+        payload = {
+            'access_key' : self.access_key,
+            'nonce' : str(uuid.uuid4()),
+            'query_hash' : query_hash,
+            'query_hash_alg' : 'SHA512'
+        }
+        jwt_token = jwt.encode(payload, self.secret_key)
+        authorize_token = 'Bearer {}'.format(jwt_token)
+        headers = {
+            "Authorization" : authorize_token
+        }
+        res = requests.post(
+            self.server_url + route_name,
+            params = query,
+            headers = headers
+            )
+        print(res.json())
+
+    def orderCancelRequest(self):
+        route_name = 'order'
+        target_id = '3235d9cf-5e12-45da-8706-80aad6afc9f4'
+        query = {
+            'uuid' : target_id
+        }
+        query_string = urlencode(query).encode()
+        m = hashlib.sha512()
+        m.update(query_string)
+        query_hash = m.hexdigest()
+        payload = {
+            'access_key' : self.access_key,
+            'nonce' : str(uuid.uuid4()),
+            'query_hash' : query_hash,
+            'query_hash_alg' : 'SHA512'
+        }
+        jwt_token = jwt.encode(payload, self.secret_key)
+        authorize_token = 'Bearer {}'.format(jwt_token)
+        headers = {
+            "Authorization" : authorize_token
+        }
+        res = requests.delete(
+            self.server_url + route_name,
+            params=query,
+            headers=headers
+            )
+        print(res.json())
+
 upbeat = Upbeat()
+# 전체 계좌 조회
 account = upbeat.getAllAccount()
 print(account)
+# 주문 가능 정보
 order = upbeat.getOrderChance()
 print(order)
+# 주문하기 (매도)
+'''
+order = upbeat.orderRequest(
+    volume = '2',
+    price = '5000'
+)
+'''
+# 주문 리스트 조회
+orderList = upbeat.getOrderList()
+print(orderList)
+# 주문 취소
+orderCancel = upbeat.orderCancelRequest()
+
+depositList = upbeat.getDepositList()
+print(depositList)
