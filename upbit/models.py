@@ -18,22 +18,23 @@ from abc import ABCMeta, abstractclassmethod
 
 
 class UpbitManager():
-    def __init__(self):
+    def __init__(self, data):
         load_dotenv()
-        self.access_key = os.getenv('ACCESS_KEY')
-        self.secret_key = os.getenv('SECRET_KEY')
-        self.server_url = os.getenv('SERVER_URL')
+
+        self.upbit = pyupbit.Upbit(
+            access=os.getenv('ACCESS_KEY'),
+            secret=os.getenv('SECRET_KEY')
+        )
+        self.market=data["market"]
 
     def _get_balance(self):
+        _result = self.upbit.get_balances()[0]["balance"]
+        return _result
 
-        _upbit = pyupbit.Upbit(
-            access=self.access_key,
-            secret=self.secret_key
-            )
-        print(_upbit.get_balances())
-        #print(upbit.get_balances())
+    def _bid_with_set_price(self, range):
 
-
+        ret = self.upbit.buy_limit_order(self.market , range, 10)
+        print(ret)
 
 
 class StrategyManager():
@@ -48,7 +49,7 @@ class StrategyManager():
         
         today_open = pyupbit.get_ohlcv(ticker=self.market)[-1:]['open'][0] # 오늘 시가
 
-        return today_open
+        return float(today_open)
 
     def get_yesterday_high(self):
         '''
@@ -57,7 +58,7 @@ class StrategyManager():
 
         yesterday_high = pyupbit.get_ohlcv(ticker=self.market)[-2:-1]['high'][0] # 전날 고가
 
-        return yesterday_high
+        return float(yesterday_high)
 
     def get_yesterday_low(self):
         '''
@@ -66,7 +67,7 @@ class StrategyManager():
 
         yesterday_low = pyupbit.get_ohlcv(ticker=self.market)[-2:-1]['low'][0] # 전날 고가
 
-        return yesterday_low
+        return float(yesterday_low)
 
     def get_current(self):
         '''
@@ -74,7 +75,7 @@ class StrategyManager():
         '''
 
         current = pyupbit.get_current_price(self.market)
-        return current
+        return float(current)
 
     def get_range(self, today_open, yesterday_high, yesterday_low):
         '''
@@ -86,7 +87,7 @@ class StrategyManager():
         range = yesterday_high - yesterday_low
         range *= self.k
         result = today_open + range
-        return result
+        return float(result)
 
     def is_checked_market_condition(self, range, current):
         '''
@@ -106,13 +107,19 @@ class StrategyManager():
 
 
 
-
-upbitManager = UpbitManager()
 data = {
-    "market" : "USDT-BTC",
+    "market" : "KRW-ADA",
     "k" : 0.5
 }
 strategy = StrategyManager(data)
+upbitManager = UpbitManager(data)
+
+'''
+    
+    range = (어제 고가 - 어제 저가) * data["k"]
+    오늘 시가 + range 가 지금 시세보다 낮으면 매도 높으면 보류
+'''
+#print(pyupbit.get_tickers())
 today = strategy.get_today_open()
 high = strategy.get_yesterday_high()
 low = strategy.get_yesterday_low()
@@ -126,4 +133,12 @@ ischk = strategy.is_checked_market_condition(
     range=range,
     current=current
     )
-print(ischk)
+print(pyupbit.get_orderbook(ticker=data['market']))
+my_current_balance= upbitManager._get_balance()
+if ischk is True:
+    if float(my_current_balance) > float(range):
+        print("돈잇음")
+        upbitManager._bid_with_set_price(range)
+    else:
+        print("돈없음")
+
