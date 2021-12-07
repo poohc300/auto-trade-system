@@ -1,2 +1,4 @@
-# auto-trade-system
-This system is for bitcoin trade automatically
+# Intro
+This is a system for crpyto algorithmic trading with Larry Williams strategy
+
+# implementation
