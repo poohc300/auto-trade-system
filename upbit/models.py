@@ -118,7 +118,7 @@ upbitManager = UpbitManager(data)
     
     range = (어제 고가 - 어제 저가) * data["k"]
     오늘 시가 + range 가 지금 시세보다 낮으면 매도 높으면 보류
-'''
+
 #print(pyupbit.get_tickers())
 today = strategy.get_today_open()
 high = strategy.get_yesterday_high()
@@ -142,3 +142,4 @@ if ischk is True:
     else:
         print("돈없음")
 
+'''

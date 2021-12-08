@@ -21,24 +21,38 @@ from dotenv import load_dotenv
 
     'ApiClient'는 view를 통해 외부에서 주입되는 upbit key를 self에 담아 저장하는 클래스이다
 
-    'UpbitService'는 전체 계좌 조회, 주문 가능 정보 조회, 개별 주문 조회,
-    주문 리스트 조회, 입금 리스트 조회, 주문하기, 주문 취소 요청,
-    출금 가능 정보 조회, 코인 출금하기, 원화 출금하기, 개별 입금 조회,
-    입금 주소 생성 요청, 전체 입금 주소 조회, 개별 입금 주소 조회, 원화 입금하기,
-    입출금 현황 조회, API 키 리스트 조회 기능이 있다
+    'UpbitService'는 
+    전체 계좌 조회, 
+    주문 가능 정보 조회, 
+    개별 주문 조회,
+    주문 리스트 조회, 
+    입금 리스트 조회, 
+    주문하기, 
+    주문 취소 요청,
+    출금 가능 정보 조회, 
+    코인 출금하기, 
+    원화 출금하기, 
+    개별 입금 조회,
+    입금 주소 생성 요청, 
+    전체 입금 주소 조회, 
+    개별 입금 주소 조회, 
+    원화 입금하기,
+    입출금 현황 조회, 
+    API 키 리스트 조회 기능이 있다
+
+    view에서 service.py에 있는 서비스 호출하는 방법:
+
+    # views.py
+    class UpbitView(generics.GenericAPIView):
+        def get(self, request, *args, **kwargs):
+            UpbitService().any_business_method()
+            return Response(...)
 '''
-
-class ApiClient:
-
-    def __init__(self, access_key: str, secret_key: str, server_url: str):
-        self.access_key = access_key
-        self.secret_key = secret_key
-        self.server_url = server_url
 
 class UpbitService():
     
-    def __init__(self, api_client: ApiClient):
-        self.api_client = api_client
+    def __init__(self, data: dict):
+        self.data = data
 
     def getQuery(self, query):
         query = query
@@ -546,12 +560,7 @@ class UpbitService():
             headers=headers
         )
 
-UpbitService = UpbitService(
-    api_client=ApiClient(
-        access=os.getenv('ACCESS_KEY'),
-        secret=os.getenv('SECRET_KEY')
-    )
-)
+
 
 '''
     테스트 코드
