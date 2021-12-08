@@ -14,6 +14,19 @@ from urllib.parse import urlencode
 
 import requests
 from dotenv import load_dotenv
+'''
+    upbit 거래소와 상호작용하는 서비스 레이어
+    view로부터 통제를 받아 models 또는 serializer 부터 
+    필요한 데이터베이스의 데이터를 처리하고 로직을 수행하는 부분
+
+    'ApiClient'는 view를 통해 외부에서 주입되는 upbit key를 self에 담아 저장하는 클래스이다
+
+    'UpbitService'는 전체 계좌 조회, 주문 가능 정보 조회, 개별 주문 조회,
+    주문 리스트 조회, 입금 리스트 조회, 주문하기, 주문 취소 요청,
+    출금 가능 정보 조회, 코인 출금하기, 원화 출금하기, 개별 입금 조회,
+    입금 주소 생성 요청, 전체 입금 주소 조회, 개별 입금 주소 조회, 원화 입금하기,
+    입출금 현황 조회, API 키 리스트 조회 기능이 있다
+'''
 
 class ApiClient:
 
@@ -533,7 +546,7 @@ class UpbitService():
             headers=headers
         )
 
-service = Service(
+UpbitService = UpbitService(
     api_client=ApiClient(
         access=os.getenv('ACCESS_KEY'),
         secret=os.getenv('SECRET_KEY')
