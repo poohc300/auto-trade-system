@@ -15,12 +15,17 @@ from urllib.parse import urlencode
 import requests
 from dotenv import load_dotenv
 
-class Upbeat():
-    def __init__(self):
-        load_dotenv()
-        self.access_key = os.getenv('ACCESS_KEY')
-        self.secret_key = os.getenv('SECRET_KEY')
-        self.server_url = os.getenv('SERVER_URL')
+class ApiClient:
+
+    def __init__(self, access_key: str, secret_key: str, server_url: str):
+        self.access_key = access_key
+        self.secret_key = secret_key
+        self.server_url = server_url
+
+class Service():
+    
+    def __init__(self, api_client: ApiClient):
+        self.api_client = api_client
 
     def getQuery(self, query):
         query = query
@@ -527,6 +532,14 @@ class Upbeat():
             route_name=route_name,
             headers=headers
         )
+
+service = Service(
+    api_client=ApiClient(
+        access=os.getenv('ACCESS_KEY'),
+        secret=os.getenv('SECRET_KEY')
+    )
+)
+
 '''
     테스트 코드
 '''
