@@ -39,7 +39,9 @@ from .upbit_dto import UpbitDTO
     개별 입금 주소 조회, 
     원화 입금하기,
     입출금 현황 조회, 
-    API 키 리스트 조회 기능이 있다
+    API 키 리스트 조회 
+    일 별 캔들 조회
+    기능이 있다
 
     view에서 service.py에 있는 서비스 호출하는 방법:
 
@@ -579,6 +581,32 @@ class UpbitService():
             url,
             headers=headers
             )
+        return response.json()
+
+    def get_ticker(self):
+        '''
+            현재가 정보
+        '''
+        market=self.market
+        url = f"https://api.upbit.com/v1/ticker?markets={market}"
+        headers = {"Accept": "application/json"}
+        response= requests.request(
+            "GET",
+            url,
+            headers=headers
+            )
+        return response.json()
+
+    def get_ticks(self):
+        '''
+            최근 체결 내역
+        '''    
+        market=self.market
+        url = f"https://api.upbit.com/v1/trades/ticks?market={market}&count=1"
+
+        headers = {"Accept": "application/json"}
+
+        response = requests.request("GET", url, headers=headers)
         return response.json()
 '''
     테스트 코드

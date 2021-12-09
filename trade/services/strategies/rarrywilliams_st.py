@@ -25,3 +25,11 @@ class Strategy(UpbitService):
         range += opening_price
         return range
 
+    def get_current_price(self):
+        '''
+            현재 해당하는 코인 시세 구하기
+        '''
+        result = super().get_ticks()[0]
+        result = result['trade_price']
+
+        return result
