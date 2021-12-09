@@ -111,7 +111,6 @@ class UpbitService():
             self.server_url + route_name,
             headers=headers
             )
-        print(res.json())
         return res.json()
 
     def sendParamForm(
@@ -126,7 +125,6 @@ class UpbitService():
             params=query,
             headers=headers
             )
-        print(res.json())
 
         return res.json()
 
@@ -141,7 +139,6 @@ class UpbitService():
         }
         jwt_token = self.getJwtToken(payload)
         authorize_token = self.getAuthorizeToken(jwt_token)
-        print(authorize_token)
         headers = self.getHeaders(authorize_token)
         res = self.sendForm(
             route_name=route_name,
@@ -245,7 +242,7 @@ class UpbitService():
             headers=headers
             )
 
-    def orderRequest(self, volume, price, side_status):
+    def orderRequest(self, volume, market, price, ord_type, side_status):
         '''
             주문 하기
 
@@ -269,13 +266,13 @@ class UpbitService():
         route_name = "orders"
         ord_type = "limit"
         query = {
-            'market' : 'KRW-ADA',
+            'market' : market,
             'side' : side,
             'volume' : volume,
             'price' : price,
             'ord_type' : ord_type
         }
-        
+        print(query)
         query_string = urlencode(query).encode()
         m = hashlib.sha512()
         m.update(query_string)
@@ -297,7 +294,7 @@ class UpbitService():
             params = query,
             headers = headers
             )
-        print(res.json())
+        return res.json()
 
     def orderCancelRequest(self):
         '''

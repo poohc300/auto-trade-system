@@ -31,7 +31,7 @@ class OrderAPIView(APIView):
         dto = self.build_dto()
         service = Strategy(dto)
         try:
-            result = service.get_current_price()
+            result = service.ask()
 
         except Exception as e:
             return HttpResponse(e)
