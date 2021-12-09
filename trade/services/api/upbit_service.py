@@ -579,7 +579,7 @@ class UpbitService():
             url,
             headers=headers
             )
-        return response.text
+        return response.json()
 '''
     테스트 코드
 '''
