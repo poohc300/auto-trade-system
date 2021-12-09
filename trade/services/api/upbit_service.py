@@ -14,6 +14,7 @@ from urllib.parse import urlencode
 
 import requests
 from dotenv import load_dotenv
+from .upbit_dto import UpbitDTO
 '''
     upbit 거래소와 상호작용하는 서비스 레이어
     view로부터 통제를 받아 models 또는 serializer 부터 
@@ -51,8 +52,12 @@ from dotenv import load_dotenv
 
 class UpbitService():
     
-    def __init__(self, data: dict):
-        self.data = data
+    def __init__(self, data: UpbitDTO):
+        self.access_key = data.access_key
+        self.secret_key = data.secret_key
+        self.server_url = data.server_url
+        self.market = data.market
+        self.days_number = data.days_number
 
     def getQuery(self, query):
         query = query
@@ -560,8 +565,21 @@ class UpbitService():
             headers=headers
         )
 
-
-
+    def get_days_candle(self):
+        '''
+           일 별 캔들 구하기
+        '''
+        market=self.market
+        days_number=self.days_number
+        route_name = 'day_candles'
+        url = f"https://api.upbit.com/v1/candles/days?market={market}&count={days_number}"
+        headers =  {"Accept" : "application/json"}
+        response= requests.request(
+            "GET",
+            url,
+            headers=headers
+            )
+        return response.text
 '''
     테스트 코드
 '''
