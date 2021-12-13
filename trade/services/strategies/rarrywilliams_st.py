@@ -159,11 +159,11 @@ class Strategy(UpbitService):
 
             매수 시도
                 목표가가 현재가 이상일 경우 잔고를 조회하고 주문 가능한 수량을 계산한 후에 시장가 매수
-                    현재가가 목표가 보다 크면
-                    잔고 조회를 해서 보유중인 원화를 얻어오고
-                    호가창을 조회해서 최우선 매도 호가를 조회함
-                    원화 잔고를 최우선 매도가로 나눠서 구매가능한 수량 계산하고
-                    시장가 주문으로 코인 매수
+                현재가가 목표가 보다 크면
+                잔고 조회를 해서 보유중인 원화를 얻어오고
+                호가창을 조회해서 최우선 매도 호가를 조회함
+                원화 잔고를 최우선 매도가로 나눠서 구매가능한 수량 계산하고
+                시장가 주문으로 코인 매수
             매도 시도
                 다음날 시초에 전량 매도하는데
             '''
@@ -199,65 +199,12 @@ class Strategy(UpbitService):
                     )
                     print(result)
                 time.sleep(1)
-                '''
-                if (float(volume) > 0.0) and float(current_krw_balance) > 5000:
-                    print("매수")
-                    
-                    if code != 1:
-                        if range > current_coin_value:
-                            print("래리 타임 일때")
-                            if volume > 0.0:
-                                print("코인 살돈이 있을 떄")
-                                result = self.bid(current_krw_balance)
-                                print(result)
-                                time.sleep(1000)    
-                                continue
-                            else:
-                                print("코인 살돈조차 없을 때")
-                                print(current_krw_balance)
-                                code = 1
-                                time.sleep(1000)
-                                continue
-                        else:
-                            print("래리타임 아닐때")
-                            code = 1
-                            time.sleep(1000)
-                            continue
-                    elif code == 1:
-                        print("매도해야할 때")
-                        time.sleep(1000)
-                        continue
-                else:
-                    print("매도해야할 때")
-                    result = self.ask()
-                    # 주문 취소 로직
-                    # 주문 조회
-                    cancel = super().orderCancelRequest()
-
-                    code = 2
-                    print(code)
-                    time.sleep(1000)
-                    continue
-
-                '''
+                
 
             except Exception as e:
                 return ({"error" : e})
 
-        # 지금 살수 있는지 없는지 잔액 체크
-        '''
-            while 1:
-                print("22")
-                if volume > 0.0:
-                    result = self.bid()
-                    print(result)
-
-                else:
-                    result = self.ask()
-                    print(result)
-
-        '''
-      
+'''
 strategy = Strategy(
     UpbitDTO(
         access_key='agI3Xs74VX8pMPzxCLLdOgWGr5TrFtf7VT5iiFpt',
@@ -268,3 +215,4 @@ strategy = Strategy(
         )
 )
 strategy.rotate()
+'''
