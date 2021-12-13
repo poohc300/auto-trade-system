@@ -31,7 +31,8 @@ class OrderAPIView(APIView):
         dto = self.build_dto()
         service = Strategy(dto)
         try:
-            result = service.ask()
+
+            result = service.rotate()
 
         except Exception as e:
             return HttpResponse(e)

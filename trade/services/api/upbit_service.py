@@ -146,6 +146,47 @@ class UpbitService():
             )
         return res
 
+    def getAllOrder(self):
+        '''
+            전체 주문 정보
+        '''
+        access_key = self.access_key
+        secret_key = self.secret_key
+        server_url = self.server_url
+
+        query = {
+            'state': 'done',
+        }
+        query_string = urlencode(query)
+
+        uuids = [
+            '9ca023a5-851b-4fec-9f0a-48cd83c2eaae',
+            #...
+        ]
+        uuids_query_string = '&'.join(["uuids[]={}".format(uuid) for uuid in uuids])
+
+        query['uuids[]'] = uuids
+        query_string = "{0}&{1}".format(query_string, uuids_query_string).encode()
+
+        m = hashlib.sha512()
+        m.update(query_string)
+        query_hash = m.hexdigest()
+
+        payload = {
+            'access_key': access_key,
+            'nonce': str(uuid.uuid4()),
+            'query_hash': query_hash,
+            'query_hash_alg': 'SHA512',
+        }
+
+        jwt_token = jwt.encode(payload, secret_key)
+        authorize_token = 'Bearer {}'.format(jwt_token)
+        headers = {"Authorization": authorize_token}
+
+        res = requests.get(server_url + "/v1/orders", params=query, headers=headers)
+
+        print(res.json())
+
     def getOrderChance(self):
         '''
             주문 가능 정보
@@ -296,12 +337,12 @@ class UpbitService():
             )
         return res.json()
 
-    def orderCancelRequest(self):
+    def orderCancelRequest(self, id):
         '''
             주문 취소 요청
         '''
         route_name = 'order'
-        target_id = '3235d9cf-5e12-45da-8706-80aad6afc9f4'
+        target_id = id
         query = {
             'uuid' : target_id
         }
@@ -579,6 +620,22 @@ class UpbitService():
             headers=headers
             )
         return response.json()
+    
+    def get_minutes_candle(self):
+        '''
+           분 별 캔들 구하기
+        '''
+        market=self.market
+        
+        route_name = 'day_candles'
+        url = f"https://api.upbit.com/v1/candles/minutes/1?market={market}&count=1"
+        headers =  {"Accept" : "application/json"}
+        response= requests.request(
+            "GET",
+            url,
+            headers=headers
+            )
+        return response.json()
 
     def get_ticker(self):
         '''
@@ -605,6 +662,20 @@ class UpbitService():
 
         response = requests.request("GET", url, headers=headers)
         return response.json()
+
+    def get_orderbooks(self):
+        '''
+            호가 정보 조회
+        '''
+        market = self.market
+        url = f"https://api.upbit.com/v1/orderbook?markets={market}"
+
+        headers = {"Accept": "application/json"}
+
+        response = requests.request("GET", url, headers=headers)
+
+        return response.json()
+
 '''
     테스트 코드
 '''
