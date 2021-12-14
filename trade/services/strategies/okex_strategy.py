@@ -1,5 +1,9 @@
 from ..okex.okex_dto import OkexDTO
 from ..okex.okex_service import OkexService
+import json
+import time
+import os
+import datetime
 
 class OkexStrategy(OkexService):
 
@@ -7,9 +11,15 @@ class OkexStrategy(OkexService):
         self.dto = dto
         super().__init__(dto)
 
-    def get_current_balance(self):
-        return super().get_current_balance()
+    def test(self):
+        print("test")
 
 
-okex_st = OkexStrategy()
-okex_st.get_current_balance()
+okex_st = OkexStrategy(
+    base_rest_url='https://www.okex.com',
+    api_key='b4eaec2d-2655-4a40-a105-84ed2850b9b6',
+    secret_key='1D8BEA9C0DA092DFC3C3632B544EBEC1',
+    passphrase='mm0819',
+    instId='BTC-USD-SWAP'
+)
+okex_st.test()
