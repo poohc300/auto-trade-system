@@ -16,18 +16,22 @@ class OkexService():
         self.secret_key = data.secret_key
         self.passphrase = data.passphrase
         self.instId = data.instId
-        
-    def get_server_timestamp(self):
 
-        service_name = '/api/v5/public/time'
 
-        return
+    def get_range(self):
+        '''
+            get range
+        '''
+        range = 0.0
+        result = self.get_ticker_info()
+        yesterday_higest_price = result['data'][0]['high24h']
+        yesterday_lowest_price = result['data'][0]['low24h']
+        open_price = result['data'][0]['sodUtc0']
 
-    def get_account_info(self):
+        range = (float(yesterday_higest_price) - float(yesterday_lowest_price)) * 0.5
+        range += float(open_price)
 
-        service_name = '/api/v5/account/balance'
-
-        return
+        return range
 
     def get_ticker_info(self):
         '''
@@ -45,7 +49,7 @@ class OkexService():
             "GET",
             url=url
         )
-        print(response)
+        print(response.json())
         return response.json()
 
     def signature(self, timestamp, requestPath, method, body):
