@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 from .services.api.upbit_dto import UpbitDTO
 from .services.strategies.rarrywilliams_st import Strategy
+from .services.strategies.okex_strategy import OkexStrategy
 from rest_framework.views import APIView
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -30,6 +31,7 @@ class OrderAPIView(APIView):
         
         dto = self.build_dto()
         service = Strategy(dto)
+
         try:
 
             result = service.rotate()
