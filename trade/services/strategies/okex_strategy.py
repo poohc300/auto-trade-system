@@ -26,7 +26,9 @@ class OkexStrategy(OkexService):
         
         while True:
             range = super().get_range()
+            last_price = super().get_ticker_info()['data'][0]['last']
             try:
+                print(f"타겟가격: {range} VS 현재가격: {last_price}")
                 now = datetime.datetime.now()
                 if update_time < now < update_time + datetime.timedelta(seconds=10):
                 # 업데이트 할 시간이되면
@@ -34,6 +36,9 @@ class OkexStrategy(OkexService):
                     update_time =  datetime.datetime(now.year, now.month, now.day, now.hour, now.minute, now.second) + datetime.timedelta(hours=1)
 
                     print("매도 시도")
+
+                if float(last_price) < range:
+                    print("래리 타임")
                 time.sleep(1)
             except Exception as e:
                 print(e)
@@ -74,6 +79,7 @@ class OkexStrategy(OkexService):
             except Exception as e:
                 return ({"error" : e})
         '''
+
 okex_st = OkexStrategy(
     OkexDTO(
     base_rest_url='https://www.okex.com',

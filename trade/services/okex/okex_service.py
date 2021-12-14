@@ -49,7 +49,6 @@ class OkexService():
             "GET",
             url=url
         )
-        print(response.json())
         return response.json()
 
     def signature(self, timestamp, requestPath, method, body):
@@ -122,7 +121,6 @@ class OkexService():
         )
         header['OK-ACCESS-TIMESTAMP'] = str(OK_ACCESS_TIMESTAMP)
         header['OK-ACCESS-PASSPHRASE'] = OK_ACCESS_PASSPHRASE
-        print(OK_ACCESS_TIMESTAMP)
         return header
 
     def get_balance(self):
@@ -140,7 +138,6 @@ class OkexService():
            url=url
     
         )
-        print(response)
         return response.json()
 
     def get_px(self):
@@ -175,7 +172,6 @@ class OkexService():
                 'sz': _sz
             }
         )
-        print(response)
         return response.json()
 
     def get_orderbook(self):
