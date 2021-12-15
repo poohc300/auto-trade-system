@@ -88,11 +88,12 @@ class OkexService():
         '''
         if str(body) == '{}' or str(body) == 'None':
             body=''
+        body=''
         # request의 헤더에 밑의 값을 더 넣으면 됨
-        
         OK_ACCESS_SECRET_KEY = self.secret_key
         CONTENT_TYPE = 'application/json'
         message =  str(timestamp) + str.upper(method) + requestPath + body
+        print(message)
         mac = hmac.new(
            bytes(OK_ACCESS_SECRET_KEY, encoding='utf8'),
            bytes(message, encoding='utf-8'),
@@ -100,13 +101,13 @@ class OkexService():
         )
         d = mac.digest()
         result = base64.b64encode(d)
-
         return result
 
-    def build_headers(self, method, requestPath, body:dict=dict()):
+    def build_headers(self, method, requestPath, body):
         '''
             build headers
         '''
+        body = json.dumps(body) if method == 'POST' else ""
         OK_ACCESS_KEY = self.api_key
         OK_ACCESS_TIMESTAMP = datetime.datetime.utcnow().isoformat()[:-3]+'Z'
         OK_ACCESS_PASSPHRASE = self.passphrase
@@ -127,11 +128,11 @@ class OkexService():
         '''
             Retrieve the balances of all the assets
         '''
-        url = f'{self.base_rest_url}/api/v5/asset/balances'
+        url = f'{self.base_rest_url}/api/v5/account/balance'
         response = requests.request(
            headers=self.build_headers(
                method='GET',
-               requestPath='/api/v5/asset/balances',
+               requestPath='/api/v5/account/balance',
                body=''
            ),
            method='GET',
@@ -154,23 +155,30 @@ class OkexService():
 
         return
 
-    def order(self, side:str):
+    def order(self, side:str, px:str, sz:str):
         instId = self.instId
         url = f'{self.base_rest_url}/api/v5/trade/order'
-        _px = 'px'
-        _sz = 'sz'
-        response = requests.request(
-            'POST',
-            url=url,
-            body={
+        _px = px
+        _sz = sz
+        _body={
                 'instId':instId,
                 'tdMode':'cash',
-                'clOrdId': 'b15',
                 'side': side,
                 'ordType': 'limit',
                 'px': _px,
                 'sz': _sz
             }
+        
+        _body=json.dumps(_body)
+        response = requests.request(
+            'POST',
+            headers=self.build_headers(
+                method='POST',
+                requestPath='api/v5/trade/order',
+                body=_body
+            ),
+            url=url,
+            data=_body
         )
         return response.json()
 

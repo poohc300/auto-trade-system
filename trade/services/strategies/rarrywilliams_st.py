@@ -185,7 +185,7 @@ class Strategy(UpbitService):
                 current_price = self.get_current_price()
                 print(f"현재가격 {current_price} : 타겟가격 {target_price}")
 
-                if current_price < target_price:
+                if current_price > target_price:
                     print("매수 시도")
                     current_krw_balance = super().getAllAccount()[0]['balance']
                     current_krw_balance = 50000.0
@@ -203,7 +203,6 @@ class Strategy(UpbitService):
 
             except Exception as e:
                 return ({"error" : e})
-
 '''
 strategy = Strategy(
     UpbitDTO(
