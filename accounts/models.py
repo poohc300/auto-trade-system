@@ -1,20 +1,15 @@
-from datetime import timezone
+from typing_extensions import Required
 from django.db import models
-from django.contrib.auth.models import UserManager, AbstractUser
-from django.utils import timezone
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 
-def get_now():
+class User(AbstractBaseUser):
 
-    return timezone.localtime()
-
-class User(AbstractUser):
-    objects = UserManager()
-    
     id = models.AutoField(primary_key=True)
-    username = models.CharField(unique=True, max_length=50)
-    password = models.CharField(max_length=50)
-    email = models.CharField(max_length=300)
-    api_key = models.CharField(blank=True, max_length=100)
-    secret_key = models.CharField(blank=True, max_length=100)
-    created_at = models.DateField(default=get_now())
-    #profile_image = models.ImageField(blank=True, null=True) # null=True: DB에 NULL로 
+    user_id = models.CharField(max_length=100, unique=True)
+    username = models.CharField(max_length=100)
+    password = models.CharField(max_length=100)
+
+    REQUIRED_FIELDS = []
+    USERNAME_FIELD = 'user_id'
+    class Meta:
+        db_table = 'User'
