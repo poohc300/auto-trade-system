@@ -16,7 +16,6 @@ class Order(models.Model):
     created_at = models.DateField(auto_now_add=True)
     type = models.CharField(max_length=200)
     status = models.BooleanField()
-    user_id = models.ForeignKey('User', on_delete=models.CASCADE)
 
     class Meta:
         ordering = ['created_at']
