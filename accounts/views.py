@@ -13,11 +13,11 @@ from .models import *
 
 # 누구나 접근 가능
 @permission_classes([AllowAny]) 
-class Registration(generics.GenericAPIView):
+class Signup(generics.GenericAPIView):
 
     def post(self, request, *args, **kwargs):
         user = request.data
-        
+
         return Response(
             {
                 'message' : "sign up success"
@@ -32,6 +32,7 @@ class Login(generics.GenericAPIView):
     def post(self, request, *args, **kwargs):
         
         user = request.data
+        print(user)
         if user['username'] == "None":
             return Response({"message": "fail"}, status=status.HTTP_401_UNAUTHORIZED)
         
@@ -40,3 +41,4 @@ class Login(generics.GenericAPIView):
                 "message" : "login success"
             }
         )
+
