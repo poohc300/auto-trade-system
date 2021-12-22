@@ -9,22 +9,23 @@ from rest_framework.decorators import permission_classes, authentication_classes
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from rest_framework_jwt.serializers import VerifyJSONWebTokenSerializer
 
-from .models import *
-
+from .models import User, UserManager
+from .serializers import UserCreateSerializer
 # 누구나 접근 가능
 @permission_classes([AllowAny]) 
 class Signup(generics.GenericAPIView):
 
     def post(self, request, *args, **kwargs):
-        user = request.data
-
-        return Response(
-            {
-                'message' : "sign up success"
-               
-            },
-                status=status.HTTP_201_CREATED,
-        )
+        serializer = UserCreateSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response(
+                {
+                    'message' : "sign up success"
+                
+                },
+                    status=status.HTTP_201_CREATED,
+            )
 
 @permission_classes([AllowAny])
 class Login(generics.GenericAPIView):
