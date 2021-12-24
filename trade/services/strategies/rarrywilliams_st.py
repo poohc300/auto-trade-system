@@ -206,12 +206,13 @@ class Strategy(UpbitService):
 '''
 strategy = Strategy(
     UpbitDTO(
-        access_key='agI3Xs74VX8pMPzxCLLdOgWGr5TrFtf7VT5iiFpt',
-        secret_key='AxPoPotHZfmxkxyIwjFU1zJREcE1PchSXCDMvcCM',
-        server_url="https://api.upbit.com/v1/",
+        access_key='4ZhAowkaZmfNvAG8QrZAKoxORyen1q8x0xAaiRjB',
+        secret_key='lGAGkF0h2LQXz1uGILgxcEx0jgyICe8jTb7B7VDm',
+        server_url="https://api.upbit.com",
         market="KRW-ADA",
         days_number=2
         )
 )
-strategy.rotate()
+result = strategy.test()
+print(result)
 '''

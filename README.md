@@ -9,3 +9,6 @@ Upbit 계좌와 잔액이 있다는 가정하에서
 
 # Author
 Jeremy
+
+# JWT Reference
+https://moondol-ai.tistory.com/173?category=865999

@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'rest_framework',
     'rest_framework.authtoken',
+    'rest_framework_simplejwt',
     # apps
     'trade',
     'accounts',
@@ -54,36 +55,44 @@ INSTALLED_APPS = [
 ]
 AUTH_USER_MODEL = 'accounts.User'
 SITE_ID = 1
-ACCOUNT_ADAPTER = 'accounts.adapter.CustomAccountAdapter'
-REST_AUTH_REGISTER_SERIALIZERS = {
-    'REGISTER_SERIALIZER': 'accounts.serializers.CustomRegisterSerializer',
-}
-ACCOUT_EMAIL_VERIFICATION = 'none' # manadatory or none
-ACCOUNT_EMAIL_REQUIRED = False
+REST_USE_JWT = True
 
 import datetime
 
 REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated', # 인증된 사용자만 접근 가능
+        'rest_framework.permissions.IsAdminUser', # 관리자만 접근 가능
+        'rest_framework.permissions.AllowAny', # 누구나 접근 가능
+
+    ),
     'DEFAULT_PARSER_CLASSES': [
         'rest_framework.parsers.MultiPartParser',
         'rest_framework.parsers.JSONParser',
     ],
     'DEFAULT_AUTHENTICATION_CLASSES':[
-        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
 
     ],
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
 }
 
-REST_USE_JWT = True
 
-JWT_AUTH = {
-    'JWT_SECRET_KEY': SECRET_KEY,
-    'JWT_ALGORITHM': 'HS256',
-    'JWT_ALLOW_REFRESH': True,
-    'JWT_EXPIRATION_DELTA': datetime.timedelta(hours=2),
-    'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(days=1),
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': datetime.timedelta(hours=1),
+    'REFRESH_TOKEN_LIFETIME': datetime.timedelta(days=14),
+    'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': False,
+    'ALGORITHM': 'HS256',
+    'SIGNING_KEY': SECRET_KEY,
+    'VERIFYING_KEY': None,
+    'AUTH_HEADER_TYPES': ('JWT',),
+    'USER_ID_FIELD': 'id',
+    'USER_ID_CLAIM': 'user_id',
+    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
+    'TOKEN_TYPE_CLAIM': 'token_type',
 }
+
 CORS_ORIGIN_ALLOW_ALL = True
 
 MIDDLEWARE = [

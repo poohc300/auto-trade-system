@@ -11,7 +11,7 @@ import uuid
 import hashlib
 import json
 from urllib.parse import urlencode
-
+import time
 import requests
 from dotenv import load_dotenv
 from .upbit_dto import UpbitDTO
@@ -54,7 +54,7 @@ from .upbit_dto import UpbitDTO
 
 class UpbitService():
     
-    def __init__(self, data: UpbitDTO):
+    def __init__(self, data: UpbitDTO, *args):
         self.access_key = data.access_key
         self.secret_key = data.secret_key
         self.server_url = data.server_url
@@ -119,13 +119,11 @@ class UpbitService():
         query,
         headers
         ):
-        print(headers)
         res = requests.get(
             self.server_url +  route_name,
             params=query,
             headers=headers
             )
-
         return res.json()
 
     def getAllAccount(self):
@@ -140,6 +138,7 @@ class UpbitService():
         jwt_token = self.getJwtToken(payload)
         authorize_token = self.getAuthorizeToken(jwt_token)
         headers = self.getHeaders(authorize_token)
+        print(headers)
         res = self.sendForm(
             route_name=route_name,
             headers=headers
@@ -193,7 +192,7 @@ class UpbitService():
         '''
         route_name = "orders/chance"
         query = {
-            'market' : 'KRW-ADA'
+            'market' : self.market
         }
         query_string = self.getQueryString(query)
         query_hash = self.getQueryHash(query_string)
@@ -230,21 +229,29 @@ class UpbitService():
             headers=self.getHeaders()
             )
 
-        return res.json()
+        return res
 
-    def getOrderList(self):
+    def getOrderList(self, page, order_by):
         '''
             주문 리스트 조회
         '''
         route_name = "orders"
         query = {
-            'state': 'done',
+            'market': self.market,
+            'page' : page,
+            'order_by' : order_by
             }
-        query_string = self.getQueryString(query)
-        query_hash = self.getQueryHash(query_string)
+        query_string = urlencode(query)
+        states = ['done']
+        states_query_string = '&'.join(["states[]={}".format(state) for state in states])
+        query['states[]'] = states
+        query_string = "{0}&{1}".format(query_string, states_query_string).encode()
+        m = hashlib.sha512()
+        m.update(query_string)
+        query_hash = m.hexdigest()
         payload = {
             'access_key': self.access_key,
-            'nonce': str(uuid.uuid4()),
+            'nonce': time.time(),
             'query_hash': query_hash,
             'query_hash_alg': 'SHA512',
         }
@@ -256,6 +263,41 @@ class UpbitService():
             query=query,
             headers=headers
             )
+        return res
+
+    def getUnfinishedOrderList(self, page, order_by):
+        '''
+            주문 리스트 중에 미체결 주문 리스트
+        '''
+        route_name = "orders"
+        query = {
+            'market': self.market,
+            'page' : page,
+            'order_by' : order_by
+            }
+        query_string = urlencode(query)
+        states = ['wait', 'watch']
+        states_query_string = '&'.join(["states[]={}".format(state) for state in states])
+        query['states[]'] = states
+        query_string = "{0}&{1}".format(query_string, states_query_string).encode()
+        m = hashlib.sha512()
+        m.update(query_string)
+        query_hash = m.hexdigest()
+        payload = {
+            'access_key': self.access_key,
+            'nonce': time.time(),
+            'query_hash': query_hash,
+            'query_hash_alg': 'SHA512',
+        }
+        jwt_token = self.getJwtToken(payload)
+        authorize_token = self.getAuthorizeToken(jwt_token)
+        headers = self.getHeaders(authorize_token)
+        res = self.sendParamForm(
+            route_name=route_name,
+            query=query,
+            headers=headers
+            )
+        return res
 
     def getDepositList(self):
         '''
@@ -305,7 +347,7 @@ class UpbitService():
         '''
         side = 'bid' if side_status == 1 else 'ask'
         route_name = "orders"
-        ord_type = "limit"
+        ord_type = ord_type
         query = {
             'market' : market,
             'side' : side,
@@ -343,6 +385,7 @@ class UpbitService():
         '''
         route_name = 'order'
         target_id = id
+        print(target_id)
         query = {
             'uuid' : target_id
         }
@@ -676,6 +719,36 @@ class UpbitService():
 
         return response.json()
 
+    def get_my_order(self, market, page):
+        access_key='4ZhAowkaZmfNvAG8QrZAKoxORyen1q8x0xAaiRjB'
+        secret_key='lGAGkF0h2LQXz1uGILgxcEx0jgyICe8jTb7B7VDm'
+        
+      
+        query = {
+            'market' : market,
+            'page': page,
+            'order_by' : 'asc'
+        }
+        query_string = urlencode(query)
+        states = ['done', 'cancel']
+        states_query_string = '&'.join(["states[]={}".format(state) for state in states])
+        query['states[]'] = states
+        query_string = "{0}&{1}".format(query_string, states_query_string).encode()
+        m = hashlib.sha512()
+        m.update(query_string)
+        query_hash = m.hexdigest()
+        payload = {
+            'access_key': access_key,
+            'nonce': time.time(),
+            'query_hash': query_hash,
+            'query_hash_alg': 'SHA512',
+        }
+        jwt_token = jwt.encode(payload, secret_key)
+        authorize_token = 'Bearer {}'.format(jwt_token)
+        headers = {"Authorization": authorize_token}
+        print(headers)
+        res = requests.get(self.server_url + "/v1/orders", params=query, headers=headers)
+        return res.json()
 '''
     테스트 코드
 '''
