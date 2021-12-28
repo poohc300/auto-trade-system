@@ -219,8 +219,6 @@ class UpbitService():
             개별 주문 조회
             
             주문 uuid를 통해 개별 주문건을 조회
-            문서에는 params=query로 되어있는데 이게 uuid받아와서 검색하는
-            구조인지 아닌지 모르겟음
         '''
         route_name = "order"
         res = self.sendParamForm(
@@ -242,7 +240,7 @@ class UpbitService():
             'order_by' : order_by
             }
         query_string = urlencode(query)
-        states = ['done', 'cancel']
+        states = ['done', 'cancel'] # cancel은 빼먹으면 안됨 trade count 가 상태값
         states_query_string = '&'.join(["states[]={}".format(state) for state in states])
         query['states[]'] = states
         query_string = "{0}&{1}".format(query_string, states_query_string).encode()
@@ -720,8 +718,8 @@ class UpbitService():
         return response.json()
 
     def get_my_order(self, market, page):
-        access_key='4ZhAowkaZmfNvAG8QrZAKoxORyen1q8x0xAaiRjB'
-        secret_key='lGAGkF0h2LQXz1uGILgxcEx0jgyICe8jTb7B7VDm'
+        access_key=self.access_key
+        secret_key=self.secret_key
         
       
         query = {
