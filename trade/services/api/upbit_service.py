@@ -242,7 +242,7 @@ class UpbitService():
             'order_by' : order_by
             }
         query_string = urlencode(query)
-        states = ['done']
+        states = ['done', 'cancel']
         states_query_string = '&'.join(["states[]={}".format(state) for state in states])
         query['states[]'] = states
         query_string = "{0}&{1}".format(query_string, states_query_string).encode()

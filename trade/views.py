@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from abc import abstractclassmethod
+from abc import ABC, abstractclassmethod
 from .services.api.upbit_dto import UpbitDTO
 from .services.strategies.rarrywilliams_st import Strategy
 from .services.strategies.okex_strategy import OkexStrategy
@@ -14,9 +14,12 @@ import json
 from dotenv import load_dotenv
 from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
 from rest_framework.decorators import permission_classes, authentication_classes
+from abc import *
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
-# Create your views here.
 
+    
 
 @permission_classes([AllowAny])
 class OrderView(APIView):
@@ -51,8 +54,10 @@ class OrderView(APIView):
             market = data['market'],
             days=2
         )
+        # upbit
         service = Strategy(dto)
-
+        
+       
         try:
             side_status = 0
             #result = service.orderRequest()
@@ -280,7 +285,6 @@ class OrderCancelView(APIView):
             days=2
         )
         service = Strategy(dto)
-        print(data['order_uuid'])
         try:
             result = service.orderCancelRequest(
                 id=data['order_uuid']
@@ -291,3 +295,36 @@ class OrderCancelView(APIView):
 
         return HttpResponse(result)
 
+
+@permission_classes([AllowAny])
+class OrderCancelView(APIView):
+
+    def build_dto(self, access_key, secret_key,server_url, market, days) -> UpbitDTO:
+        #load_dotenv()
+        return UpbitDTO(
+            access_key=access_key,
+            secret_key=secret_key,
+            server_url=server_url,
+            market=market,
+            days_number=days
+        )
+
+    def post(self, request, *args, **kwargs) -> HttpResponse:
+        data = request.data['body']
+        dto = self.build_dto(
+            access_key = data['access_key'],
+            secret_key = data['secret_key'],
+            server_url="https://api.upbit.com/v1/",
+            market = data['market'],
+            days=2
+        )
+        service = Strategy(dto)
+        try:
+            result = service.orderCancelRequest(
+                id=data['order_uuid']
+            )
+            print(result)
+        except Exception as e:
+            return HttpResponse(e)
+
+        return HttpResponse(result)

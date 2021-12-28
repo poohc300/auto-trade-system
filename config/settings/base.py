@@ -51,7 +51,9 @@ INSTALLED_APPS = [
     'rest_auth',
     'rest_auth.registration',
     'allauth.socialaccount',
-    'corsheaders'
+    'corsheaders',
+    # swagger
+    'drf_yasg'
 ]
 AUTH_USER_MODEL = 'accounts.User'
 SITE_ID = 1
