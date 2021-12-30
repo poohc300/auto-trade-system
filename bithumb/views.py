@@ -122,11 +122,11 @@ class OrderBookView(APIView):
                 order_currency=_order_currency,
                 payment_currency=_payment_currency
             )
-            print(result)
+
         except Exception as e:
             return HttpResponse(e)
 
-        return HttpResponse(result)
+        return JsonResponse(result)
 
 @permission_classes([AllowAny])
 class AccountView(APIView):
@@ -138,7 +138,7 @@ class AccountView(APIView):
             properties={
                 'api_key' : openapi.Schema(type=openapi.TYPE_STRING, description='api key'),
                 'api_secret' : openapi.Schema(type=openapi.TYPE_STRING, description='api secret'),
-                'currency' : openapi.Schema(type=openapi.TYPE_STRING, description='통화 종류')
+                'currency' : openapi.Schema(type=openapi.TYPE_STRING, description='api currency')
             }
         ),
         tags=["bithumb"],
@@ -146,20 +146,20 @@ class AccountView(APIView):
     )  
     def post(self, request, *args, **kwargs) -> HttpResponse:
         data = request.data
-        _currency = data['currency']
+      
         _api_key = data['api_key']
         _api_secret = data['api_secret']    
-
-        bithumb = Bithumb(
+        _currency = data['currency']
+        
+        bithumb = BithumbService(
             conkey=_api_key,
             seckey=_api_secret
+          
         )
         try:
            
-            result = bithumb.get_balance(
-                currency=_currency
-            )
-            #print(result)
+            result = bithumb.get_balance(currency=_currency)
+            print(result)
 
         except Exception as e:
             return HttpResponse(e)
@@ -177,10 +177,8 @@ class OrderListView(APIView):
             properties={
                 'api_key' : openapi.Schema(type=openapi.TYPE_STRING, description='api key'),
                 'api_secret' : openapi.Schema(type=openapi.TYPE_STRING, description='api secret'),
-                'order_currency' : openapi.Schema(type=openapi.TYPE_STRING, description='통화 종류'),
-                'order_id' : openapi.Schema(type=openapi.TYPE_STRING, description='주문 uuid, 공백일 시 전체리스트 조회'),
-                'payment_currency' : openapi.Schema(type=openapi.TYPE_STRING, description='구매할 통화 KRW'),
-                'type' : openapi.Schema(type=openapi.TYPE_STRING, description='주문 종류')
+                'order_currency' : openapi.Schema(type=openapi.TYPE_STRING, description='통화 종류')
+            
             }
         ),
         tags=["bithumb"],
@@ -191,23 +189,15 @@ class OrderListView(APIView):
         _api_key = data['api_key']
         _api_secret = data['api_secret']   
         _order_currency = data['order_currency']
-        _order_id = data['order_id']
-        _payment_currency = data['payment_currency']
-        _type = data['type']
-
-        bithumb = Bithumb(
+        
+        bithumb = BithumbService(
             conkey=_api_key,
             seckey=_api_secret
         )
-        _order_desc = {
-            'type' : _type,
-            'order_currency' : _order_currency,
-            'order_id' : _order_id,
-            'payment_currency' : _payment_currency
-        }
+      
         try:
-            result = bithumb.get_order_completed(
-                order_desc= _order_desc
+            result = bithumb.get_transaction_history(
+                order_currency= _order_currency
             )
             print(result)
         except Exception as e:
@@ -243,7 +233,7 @@ class UnfinishedOrderListView(APIView):
         _payment_currency = data['payment_currency']
         _type = data['type']
 
-        bithumb = Bithumb(
+        bithumb = BithumbService(
             conkey=_api_key,
             seckey=_api_secret
         )
@@ -290,7 +280,7 @@ class OrderCancelView(APIView):
         _payment_currency = data['payment_currency']
         _type = data['type']
 
-        bithumb = Bithumb(
+        bithumb = BithumbService(
             conkey=_api_key,
             seckey=_api_secret
         )
