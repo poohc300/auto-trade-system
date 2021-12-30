@@ -1,5 +1,6 @@
 
 from pandas import DataFrame
+from pandas.core import api
 from .models import PrivateApi
 from .models import PublicApi
 from .models import HttpMethod
@@ -34,18 +35,6 @@ class BithumbService:
             return data
         except Exception:
             return result
-
-    def get_transaction_history(self, order_currency, payment_currency="KRW", limit=20):
-        result = None
-        try:
-            limit = min(limit, 100)
-            result = PublicApi.transaction_history(order_currency, payment_currency, limit)
-            data = result['data']
-          
-            return data
-        except Exception as e:
-            print(e)
-            return None
 
 
     def get_balance(self, currency):
@@ -122,18 +111,18 @@ class BithumbService:
         except Exception:
             return result
 
-    def get_order_completed(self, order_desc):
+    def get_order_completed(self, order_currency):
         """
         거래 완료 정보 조회
       
         """
         result = None
+        payment_currency='KRW'
         try:
-            result = self.api.order_detail(
-                type=order_desc['type'],
-                order_currency=order_desc['order_currency'],
-                order_id=order_desc['order_id'],
-                payment_currency=order_desc['payment_currency']
+            result = self.api.user_transactions(
+               
+                order_currency=order_currency,
+                payment_currency=payment_currency
                 )
             if result['status'] == '5600':
                 return None

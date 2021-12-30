@@ -178,7 +178,7 @@ class OrderListView(APIView):
                 'api_key' : openapi.Schema(type=openapi.TYPE_STRING, description='api key'),
                 'api_secret' : openapi.Schema(type=openapi.TYPE_STRING, description='api secret'),
                 'order_currency' : openapi.Schema(type=openapi.TYPE_STRING, description='통화 종류')
-            
+
             }
         ),
         tags=["bithumb"],
@@ -189,21 +189,21 @@ class OrderListView(APIView):
         _api_key = data['api_key']
         _api_secret = data['api_secret']   
         _order_currency = data['order_currency']
-        
+      
         bithumb = BithumbService(
             conkey=_api_key,
             seckey=_api_secret
         )
       
         try:
-            result = bithumb.get_transaction_history(
+            result = bithumb.get_order_completed(
                 order_currency= _order_currency
             )
             print(result)
         except Exception as e:
             return HttpResponse(e)
 
-        return HttpResponse(result)
+        return JsonResponse(result)
 
 @permission_classes([AllowAny])
 class UnfinishedOrderListView(APIView):

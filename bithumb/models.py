@@ -2,7 +2,6 @@ from django.db import models
 
 # Create your models here.
 from dataclasses import dataclass
-from typing import Optional
 from datetime import date
 import base64
 import hashlib
@@ -18,11 +17,6 @@ from urllib3.util.retry import Retry
 
 class PublicApi:
   
-    @staticmethod
-    def transaction_history(order_currency, payment_currency="KRW", limit=20):
-        uri = f"/public/transaction_history/{order_currency}_{payment_currency}?count={limit}"
-        return BithumbHttp().get(uri)
-
     @staticmethod
     def orderbook(order_currency, payment_currency="KRW", limit=5):
         uri = f"/public/orderbook/{order_currency}_{payment_currency}?count={limit}"
@@ -58,7 +52,8 @@ class PrivateApi:
     def market_sell(self, **kwargs):
         return self.http.post('/trade/market_sell', **kwargs)
 
-
+    def user_transactions(self, **kwargs):
+        return self.http.post('/info/user_transactions', **kwargs)
 
 class HttpMethod:
     def __init__(self):
