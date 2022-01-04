@@ -44,6 +44,7 @@ urlpatterns = [
     path('api/token/refresh', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
     path('trade/', include('trade.urls')),
     path('bithumb/', include('bithumb.urls')),
+    path('coinone/', include('coinone.urls')),
     path('accounts/', include('dj_rest_auth.urls')),
     path('accounts/', include('dj_rest_auth.registration.urls')),
     path('accounts/', include('allauth.urls')),
