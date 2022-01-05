@@ -8,5 +8,6 @@ urlpatterns = [
     path('orderchance', views.OrderChanceView.as_view(), name='orderchance_view'),
     path('orderlist', views.OrderListView.as_view(), name='orderlist_view'),
     path('unfinishedOrderlist', views.UnfinishedOrderListView.as_view(), name='unfinishedOrderlist_view'),
-    path('orderCancel', views.OrderCancelView.as_view(), name='orderCancel_view')
+    path('orderCancel', views.OrderCancelView.as_view(), name='orderCancel_view'),
+    path('bot', views.BotView.as_view(), name='bot')
 ]

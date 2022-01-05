@@ -4,6 +4,7 @@ from abc import ABC, abstractclassmethod
 from .services.api.upbit_dto import UpbitDTO
 from .services.strategies.rarrywilliams_st import Strategy
 from .services.strategies.okex_strategy import OkexStrategy
+from .services.strategies.auto_trade_strategy import AutotradeStrategy
 from rest_framework.views import APIView
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -367,3 +368,48 @@ class OrderCancelView(APIView):
 
         return HttpResponse(result)
 
+@permission_classes([AllowAny])
+class BotView(APIView):
+
+    def build_dto(self, access_key, secret_key,server_url, market, days) -> UpbitDTO:
+        #load_dotenv()
+        return UpbitDTO(
+            access_key=access_key,
+            secret_key=secret_key,
+            server_url=server_url,
+            market=market,
+            days_number=days
+        )
+    @swagger_auto_schema(   
+        operation_summary="봇 ",
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'access_key' : openapi.Schema(type=openapi.TYPE_STRING, description='access key'),
+                'secret_key' : openapi.Schema(type=openapi.TYPE_STRING, description='secret key')
+            }
+        ),
+        tags=["bot"],
+        operation_description="bot 생성",
+    )  
+    def post(self, request, *args, **kwargs) -> HttpResponse:
+        data = request.data
+        kwargs = data
+        dto = self.build_dto(
+            access_key = data['access_key'],
+            secret_key = data['secret_key'],
+            server_url="https://api.upbit.com/v1/",
+            market = "",
+            days=0
+        )
+        service = AutotradeStrategy(dto)
+        try:
+            result = service.filter_market_status(
+                **kwargs
+            )
+            return JsonResponse({"data" : result})
+
+        except Exception as e:
+            return JsonResponse({"message" : e})
+
+       

@@ -138,7 +138,6 @@ class UpbitService():
         jwt_token = self.getJwtToken(payload)
         authorize_token = self.getAuthorizeToken(jwt_token)
         headers = self.getHeaders(authorize_token)
-        print(headers)
         res = self.sendForm(
             route_name=route_name,
             headers=headers
@@ -184,7 +183,7 @@ class UpbitService():
 
         res = requests.get(server_url + "/v1/orders", params=query, headers=headers)
 
-        print(res.json())
+        return res.json()
 
     def getOrderChance(self):
         '''
@@ -353,7 +352,6 @@ class UpbitService():
             'price' : price,
             'ord_type' : ord_type
         }
-        print(query)
         query_string = urlencode(query).encode()
         m = hashlib.sha512()
         m.update(query_string)
@@ -383,7 +381,6 @@ class UpbitService():
         '''
         route_name = 'order'
         target_id = id
-        print(target_id)
         query = {
             'uuid' : target_id
         }
@@ -407,7 +404,7 @@ class UpbitService():
             params=query,
             headers=headers
             )
-        print(res.json())
+        return res.json()
 
     def getWithrawsChance(self):
         '''
@@ -646,12 +643,12 @@ class UpbitService():
             headers=headers
         )
 
-    def get_days_candle(self):
+    def get_days_candle(self, **kwargs):
         '''
            일 별 캔들 구하기
         '''
-        market=self.market
-        days_number=self.days_number
+        market= kwargs['market']
+        days_number= kwargs['days_number']
         route_name = 'day_candles'
         url = f"https://api.upbit.com/v1/candles/days?market={market}&count={days_number}"
         headers =  {"Accept" : "application/json"}
@@ -660,13 +657,14 @@ class UpbitService():
             url,
             headers=headers
             )
-        return response.json()
+        response = response.json()
+        return response
     
-    def get_minutes_candle(self):
+    def get_minutes_candle(self, **kwargs):
         '''
            분 별 캔들 구하기
         '''
-        market=self.market
+        market= kwargs['market']
         
         route_name = 'day_candles'
         url = f"https://api.upbit.com/v1/candles/minutes/1?market={market}&count=1"
@@ -676,13 +674,14 @@ class UpbitService():
             url,
             headers=headers
             )
-        return response.json()
+        response = response.json()
+        return response
 
-    def get_ticker(self):
+    def get_ticker(self, **kwargs):
         '''
             현재가 정보
         '''
-        market=self.market
+        market= kwargs['market']
         url = f"https://api.upbit.com/v1/ticker?markets={market}"
         headers = {"Accept": "application/json"}
         response= requests.request(
@@ -692,11 +691,11 @@ class UpbitService():
             )
         return response.json()
 
-    def get_ticks(self):
+    def get_ticks(self, **kwargs):
         '''
             최근 체결 내역
         '''    
-        market=self.market
+        market= kwargs['market']
         url = f"https://api.upbit.com/v1/trades/ticks?market={market}&count=1"
 
         headers = {"Accept": "application/json"}
@@ -704,11 +703,11 @@ class UpbitService():
         response = requests.request("GET", url, headers=headers)
         return response.json()
 
-    def get_orderbooks(self):
+    def get_orderbooks(self, **kwargs):
         '''
             호가 정보 조회
         '''
-        market = self.market
+        market= kwargs['market']
         url = f"https://api.upbit.com/v1/orderbook?markets={market}"
 
         headers = {"Accept": "application/json"}
@@ -744,9 +743,21 @@ class UpbitService():
         jwt_token = jwt.encode(payload, secret_key)
         authorize_token = 'Bearer {}'.format(jwt_token)
         headers = {"Authorization": authorize_token}
-        print(headers)
         res = requests.get(self.server_url + "/v1/orders", params=query, headers=headers)
         return res.json()
+
+    def get_all_market(self):
+        '''
+            전체 마켓 코드 조회
+        '''
+        url = "https://api.upbit.com/v1/market/all?isDetails=false"
+
+        headers = {"Accept": "application/json"}
+
+        res = requests.request("GET", url, headers=headers)
+        res = res.json()
+        return res
+
 '''
     테스트 코드
 '''
