@@ -665,9 +665,9 @@ class UpbitService():
            분 별 캔들 구하기
         '''
         market= kwargs['market']
-        
+        minutes = kwargs['minutes']
         route_name = 'day_candles'
-        url = f"https://api.upbit.com/v1/candles/minutes/1?market={market}&count=1"
+        url = f"https://api.upbit.com/v1/candles/minutes/{minutes}?market={market}&count=1"
         headers =  {"Accept" : "application/json"}
         response= requests.request(
             "GET",

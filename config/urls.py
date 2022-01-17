@@ -42,6 +42,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/token', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
+    path('bot/', include('bot.urls')),
     path('trade/', include('trade.urls')),
     path('bithumb/', include('bithumb.urls')),
     path('coinone/', include('coinone.urls')),

@@ -45,6 +45,9 @@ INSTALLED_APPS = [
     # apps
     'trade',
     'accounts',
+    'bot',
+    'bithumb',
+    'coinone',
     # auth modules
     'allauth',
     'allauth.account',
