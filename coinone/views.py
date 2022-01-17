@@ -9,7 +9,6 @@ from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 import json
 
-@permission_classes([AllowAny])
 class OrderBookView(APIView):
 
     @swagger_auto_schema(   
@@ -43,7 +42,6 @@ class OrderBookView(APIView):
         except Exception as e:
             return HttpResponse(e)
 
-@permission_classes([AllowAny])
 class OrderView(APIView):
 
     @swagger_auto_schema(   
@@ -81,7 +79,6 @@ class OrderView(APIView):
         except Exception as e:
             return HttpResponse(e)
 
-@permission_classes([AllowAny])
 class AccountView(APIView):
 
     @swagger_auto_schema(   
@@ -114,7 +111,6 @@ class AccountView(APIView):
         except Exception as e:
             return HttpResponse(e)
 
-@permission_classes([AllowAny])
 class OrderView(APIView):
 
     @swagger_auto_schema(   
@@ -153,7 +149,6 @@ class OrderView(APIView):
         except Exception as e:
             return HttpResponse(e)
 
-@permission_classes([AllowAny])
 class OrderCancelView(APIView):
 
     @swagger_auto_schema(   
