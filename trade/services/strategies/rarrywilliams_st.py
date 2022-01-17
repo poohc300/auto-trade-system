@@ -206,8 +206,8 @@ class Strategy(UpbitService):
 '''
 strategy = Strategy(
     UpbitDTO(
-        access_key='4ZhAowkaZmfNvAG8QrZAKoxORyen1q8x0xAaiRjB',
-        secret_key='lGAGkF0h2LQXz1uGILgxcEx0jgyICe8jTb7B7VDm',
+        access_key='',
+        secret_key='',
         server_url="https://api.upbit.com",
         market="KRW-ADA",
         days_number=2
