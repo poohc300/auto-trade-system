@@ -102,10 +102,10 @@ class OkexStrategy(OkexService):
 okex_st = OkexStrategy(
     OkexDTO(
     base_rest_url='https://www.okex.com',
-    api_key='b4eaec2d-2655-4a40-a105-84ed2850b9b6',
-    secret_key='1D8BEA9C0DA092DFC3C3632B544EBEC1',
-    passphrase='mm0819',
-    instId='ADA-USD-SWAP'
+    api_key='',
+    secret_key='',
+    passphrase='',
+    instId=''
     )
 )
 okex_st.rotate()
