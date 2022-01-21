@@ -20,7 +20,7 @@ DateTime==4.3
 defusedxml==0.7.1
 distlib==0.3.3
 dj-rest-auth==2.1.12
-Django==3.2.8
+Django==3.2.11
 django-allauth==0.47.0
 django-celery-beat==2.2.1
 django-celery-results==2.2.0
